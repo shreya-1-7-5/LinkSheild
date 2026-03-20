@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LinkShield AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<canvas id="matrix-canvas"></canvas>
+<div class="glow-orb"></div>
+<div class="glow-orb-red"></div>
+
+<div class="wrapper">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-row">
+      <svg class="shield" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M23 3L6 10V22C6 31.9 13.4 41.2 23 44C32.6 41.2 40 31.9 40 22V10L23 3Z"
+              fill="rgba(60,220,80,0.12)" stroke="#3cdc50" stroke-width="1.5"/>
+        <path d="M16 23L20.5 27.5L30 18" stroke="#3cdc50" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1>Link<span>Shield</span> AI</h1>
+    </div>
+    <p class="tagline">Real-time phishing &amp; threat detection</p>
+    <div class="status-pill">
+      <span class="pulse-dot"></span>
+      Model online &nbsp;·&nbsp; API ready
+    </div>
+  </div>
+
+  <!-- Main Card -->
+  <div class="card" id="mainCard">
+    <div class="scan-line"></div>
+
+    <svg class="card-corner" viewBox="0 0 48 48" fill="none">
+      <rect x="1" y="1" width="46" height="46" rx="4" stroke="#3cdc50" stroke-width="1"/>
+      <rect x="8" y="8" width="32" height="32" rx="2" stroke="#3cdc50" stroke-width="0.5"/>
+    </svg>
+
+    <p class="input-label">// Enter URL to scan</p>
+
+    <div class="input-row">
+      <div class="url-wrap">
+        <span class="url-icon">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+            <path d="M6.5 9.5a4.243 4.243 0 0 0 6 0l2-2a4.243 4.243 0 0 0-6-6l-1 1"
+                  stroke="#4a7050" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9.5 6.5a4.243 4.243 0 0 0-6 0l-2 2a4.243 4.243 0 0 0 6 6l1-1"
+                  stroke="#4a7050" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input type="text" id="url" placeholder="https://example.com"
+               autocomplete="off" spellcheck="false"/>
+      </div>
+      <button id="checkBtn" onclick="checkURL()">
+        <div class="btn-inner">
+          <div class="spinner"></div>
+          <span class="btn-text">Scan</span>
+        </div>
+      </button>
+    </div>
+
+    <p class="checking-url" id="checkingUrl">scanning › <span id="urlDisplay"></span></p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-label">Analysis Result</span>
+      <div class="divider-line right"></div>
+    </div>
+
+    <div id="result-panel"></div>
+
+  </div><!-- /card -->
+
+  <p class="footer">linkshield ai &nbsp;·&nbsp; local model &nbsp;·&nbsp; no data stored &nbsp;·&nbsp; v1.0</p>
+
+</div><!-- /wrapper -->
+
+<script src="script.js"></script>
+</body>
+</html>
