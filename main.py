@@ -1,11 +1,18 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-import pickle
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+import pandas as pd
+import pickle
 
-app = FastAPI(title="LinkShield AI")
+# ── Load Model ─────────────────────────────────────────────
+model = pickle.load(open("model.pkl", "rb"))
 
-# Enable CORS
+# ── FastAPI App ────────────────────────────────────────────
+app = FastAPI()
+
+# ── CORS (important for local + safety) ────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,13 +21,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load model
-model = pickle.load(open("model.pkl", "rb"))
+# ── Serve Static Files ─────────────────────────────────────
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Input schema
-class URLInput(BaseModel):
+# ── Input Schema ───────────────────────────────────────────
+class URLRequest(BaseModel):
     url: str
 
+# ── Feature Extraction (SIMPLE VERSION) ────────────────────
 def extract_features(url):
     return [
         url.count('.'),
@@ -32,35 +40,27 @@ def extract_features(url):
         url.count('@'),
         url.count('&'),
         url.count('!'),
-        url.count(' '),
-        url.count('~'),
-        url.count(','),
-        url.count('+'),
-        url.count('*'),
-        url.count('#'),
-        url.count('$')
+        url.count(' ')
     ]
 
+# ── Home Route (SERVES FRONTEND) ───────────────────────────
 @app.get("/")
-def home():
-    return {"message": "LinkShield AI Running"}
+def serve_frontend():
+    return FileResponse("static/index.html")
 
+# ── Prediction Route ───────────────────────────────────────
 @app.post("/predict")
-def predict(data: URLInput):
-    url = data.url
+def predict(data: URLRequest):
+    features = extract_features(data.url)
 
-    # 🔥 RULE 1: Trusted domains
-    if "google.com" in url or "github.com" in url or "microsoft.com" in url:
-        return {"result": "Safe"}
+    # Adjust based on your model training features
+    df = pd.DataFrame([features])
 
-    # 🔥 RULE 2: HTTPS check
-    if url.startswith("https://") and len(url) < 50:
-        return {"result": "Safe"}
+    prediction = model.predict(df)[0]
 
-    # ML prediction
-    features = extract_features(url)
-    prediction = model.predict([features])[0]
+    if prediction == 1:
+        result = "Phishing"
+    else:
+        result = "Safe"
 
-    return {
-        "result": "Phishing" if prediction == 1 else "Safe"
-    }
+    return {"result": result}
